@@ -1,1 +1,8 @@
 myString = "Value"
+
+/* 
+	This is a comment
+	/* This is another comment */
+*/
+
+number = 1.0

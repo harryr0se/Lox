@@ -85,8 +85,12 @@ namespace Lox
                     {
                         // A comment goes until the end of the line.
                         while (peek() != '\n' && !isAtEnd()) advance();
-                    } 
-                    else 
+                    }
+                    if (match('*'))
+                    {
+                        blockComment();
+                    }
+                    else
                     {
                         addToken(TokenType.SLASH);
                     }
@@ -106,6 +110,33 @@ namespace Lox
                         Lox.error(line, "Unexpected character.");
                     }
                     break;
+            }
+        }
+
+        private void blockComment()
+        {
+            // Keep track of the level of nesting
+            int level = 0;
+            
+            while (!isAtEnd())
+            {
+                char c = advance();
+                if (c == '*')
+                {
+                    if (match('/') && 0 == level)
+                    {
+                        advance();
+                        break;
+                    }
+                    --level;
+                }
+                else if (c == '/')
+                {
+                    if (match('*'))
+                    {
+                        ++level;
+                    }
+                }
             }
         }
 
