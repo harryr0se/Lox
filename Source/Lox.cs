@@ -6,7 +6,9 @@ namespace Lox
 {
     public class Lox
     {
+        private static Interpreter interpreter = new Interpreter();
         private static bool hadError = false;
+        private static bool hadRuntimeError = false;
         
         public static void Main(string[] args)
         {
@@ -31,6 +33,10 @@ namespace Lox
             {
                 Environment.Exit(65);
             }
+            if (hadRuntimeError)
+            {
+                Environment.Exit(70);
+            }
         }
         
         private static void runPrompt()
@@ -54,12 +60,18 @@ namespace Lox
             // Stop if there was a syntax error.
             if (hadError) return;
 
-            Console.WriteLine(new AstPrinter().print(expression));
+            interpreter.interpret(expression);
         }
         
         public static void error(int line, string message) 
         {
             report(line, "", message);
+        }
+        
+        public static void runtimeError(RuntimeError error) 
+        {
+            Console.Error.WriteLine($"{error.Message} [line {error.token.line}]");
+            hadRuntimeError = true;
         }
         
         private static void report(int line, string where, string message) 
@@ -72,11 +84,11 @@ namespace Lox
         {
             if (token.type == TokenType.EOF) 
             {
-                report(token.line, " at end", message);
+                report(token.line, "at end", message);
             }
             else 
             {
-                report(token.line, " at '" + token.lexeme + "'", message);
+                report(token.line, "at '" + token.lexeme + "'", message);
             }
         }
         

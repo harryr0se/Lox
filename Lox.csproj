@@ -44,8 +44,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\AstPrinter.cs" />
     <Compile Include="Source\Expr.cs" />
+    <Compile Include="Source\Interpreter.cs" />
     <Compile Include="Source\Lox.cs" />
     <Compile Include="Source\Parser.cs" />
+    <Compile Include="Source\RuntimeError.cs" />
     <Compile Include="Source\Scanner.cs" />
     <Compile Include="Source\Token.cs" />
     <Compile Include="Source\TokenType.cs" />
