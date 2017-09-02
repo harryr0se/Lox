@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C6C06892-AA8E-40B9-9D8C-491A602C4128}</ProjectGuid>
+    <ProjectGuid>{6988024F-C54F-4FB8-B469-66E15A3C0343}</ProjectGuid>
     <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lox</RootNamespace>
-    <AssemblyName>Lox</AssemblyName>
+    <RootNamespace>GenerateAst</RootNamespace>
+    <AssemblyName>GenerateAst</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,14 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GenerateAst.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\AstPrinter.cs" />
-    <Compile Include="Source\Expr.cs" />
-    <Compile Include="Source\Lox.cs" />
-    <Compile Include="Source\Parser.cs" />
-    <Compile Include="Source\Scanner.cs" />
-    <Compile Include="Source\Token.cs" />
-    <Compile Include="Source\TokenType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
