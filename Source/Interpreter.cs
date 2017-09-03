@@ -97,6 +97,24 @@ namespace Lox
             return expr.value;
         }
 
+        public object visitLogicalExpr(Expr.Logical expr)
+        {
+            object left = evaluate(expr.left);
+
+            // or
+            if (expr.op.type == TokenType.OR)
+            {
+                if (isTruthy(left)) return left;
+            }
+            // and
+            else
+            {
+                if (!isTruthy(left)) return left;
+            }
+
+            return evaluate(expr.right);
+        }
+
         public object visitUnaryExpr(Expr.Unary expr)
         {
             object right = evaluate(expr.right);
@@ -112,6 +130,19 @@ namespace Lox
 
             // Unreachable.
             return null;        
+        }
+
+        public object visitIfStmt(Stmt.If stmt)
+        {
+            if (isTruthy(evaluate(stmt.condition)))
+            {
+                execute(stmt.thenBranch);
+            }
+            else if (stmt.elseBranch != null)
+            {
+                execute(stmt.elseBranch);
+            }
+            return null;
         }
 
         public object visitPrintStmt(Stmt.Print stmt)
@@ -136,7 +167,16 @@ namespace Lox
 
             return null;
         }
-        
+
+        public object visitWhileStmt(Stmt.While stmt)
+        {
+            while (isTruthy(evaluate(stmt.condition)))
+            {
+                execute(stmt.body);
+            }
+            return null;
+        }
+
         public object visitAssignExpr(Expr.Assign expr)
         {
             object value = evaluate(expr.value);

@@ -27,6 +27,11 @@ namespace Lox
             return expr.value == null ? "nil" : expr.value.ToString();
         }
 
+        public string visitLogicalExpr(Expr.Logical expr)
+        {
+            return $"{expr.op.lexeme}";
+        }
+
         public string visitUnaryExpr(Expr.Unary expr) {
             return parenthesize(expr.op.lexeme, expr.right);
         }
