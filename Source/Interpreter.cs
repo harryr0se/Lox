@@ -1,22 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lox
 {
-    public class Interpreter : Expr.Visitor<object> 
+    public class Interpreter : Expr.Visitor<object>, Stmt.Visitor<object> 
     {
-        public void interpret(Expr expression) 
+        private Environment environment = new Environment(null);
+        
+        public void interpret(List<Stmt> statements) 
         {
             try 
             {
-                object value = evaluate(expression);
-                Console.WriteLine(stringify(value));
+                foreach (Stmt statement in statements) 
+                {
+                    object value = execute(statement);
+                    
+                    if (statement is Stmt.Expression)
+                    {
+                        Console.WriteLine(stringify(value));
+                    }
+                }
             } 
             catch (RuntimeError error) 
             {
                 Lox.runtimeError(error);
             }
         }
-        
+
         public object visitBinaryExpr(Expr.Binary expr)
         {
             object left = evaluate(expr.left);
@@ -54,6 +64,7 @@ namespace Lox
                     {
                         return left + (string) right;
                     }
+                    
                     throw new RuntimeError(expr.op,
                         "Operands must be two numbers or two strings.");
                 case TokenType.GREATER:
@@ -102,10 +113,80 @@ namespace Lox
             // Unreachable.
             return null;        
         }
+
+        public object visitPrintStmt(Stmt.Print stmt)
+        {
+            object value = evaluate(stmt.expression);
+            Console.WriteLine(stringify(value));
+            return null;
+        }
+
+        public object visitVarStmt(Stmt.Var stmt)
+        {
+            if (stmt.initializer != null) 
+            {
+                object value = evaluate(stmt.initializer);
+                environment.define(stmt.name.lexeme, value);
+            }
+            else
+            {
+                // Define unassigned variable
+                environment.define(stmt.name.lexeme);
+            }
+
+            return null;
+        }
         
+        public object visitAssignExpr(Expr.Assign expr)
+        {
+            object value = evaluate(expr.value);
+
+            environment.assign(expr.name, value);
+            return value;
+        }
+        
+        public object visitVariableExpr(Expr.Variable expr)
+        {
+            return environment.get(expr.name);
+        }
+
+        public object visitBlockStmt(Stmt.Block stmt)
+        {
+            executeBlock(stmt.statements, new Environment(environment));
+            return null;
+        }
+
+        public object visitExpressionStmt(Stmt.Expression stmt)
+        {
+            return evaluate(stmt.expression);
+        }
+
         private object evaluate(Expr expr) 
         {
             return expr.accept(this);
+        }
+        
+        private object execute(Stmt stmt) 
+        {
+            return stmt.accept(this);
+        }
+        
+        void executeBlock(List<Stmt> statements, Environment environment) 
+        {
+            Environment previous = this.environment;
+            try 
+            {
+                this.environment = environment;
+
+                foreach (Stmt statement in statements) 
+                {
+                    execute(statement);
+                }
+            } 
+            finally 
+            {
+                this.environment = previous;
+            }
         }
         
         private static bool isTruthy(object obj) 

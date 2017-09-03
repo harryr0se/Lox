@@ -1,19 +1,37 @@
 using Lox;
+using System.Collections.Generic;
 
 public abstract class Expr 
 {
-
 	public interface Visitor<R> 
 	{
+		R visitAssignExpr(Assign expr);
 		R visitBinaryExpr(Binary expr);
 		R visitGroupingExpr(Grouping expr);
 		R visitLiteralExpr(Literal expr);
 		R visitUnaryExpr(Unary expr);
+		R visitVariableExpr(Variable expr);
+	}
+
+	public class Assign : Expr 
+	{
+		public Assign ( Token name, Expr value ) 
+		{
+			this.name = name;
+			this.value = value;
+		}
+
+		public override R accept<R>(Visitor<R> visitor) 
+		{
+			return visitor.visitAssignExpr(this);
+		}
+
+		public Token name;
+		public Expr value;
 	}
 
 	public class Binary : Expr 
 	{
-
 		public Binary ( Expr left, Token op, Expr right ) 
 		{
 			this.left = left;
@@ -33,7 +51,6 @@ public abstract class Expr
 
 	public class Grouping : Expr 
 	{
-
 		public Grouping ( Expr expression ) 
 		{
 			this.expression = expression;
@@ -49,7 +66,6 @@ public abstract class Expr
 
 	public class Literal : Expr 
 	{
-
 		public Literal ( object value ) 
 		{
 			this.value = value;
@@ -65,7 +81,6 @@ public abstract class Expr
 
 	public class Unary : Expr 
 	{
-
 		public Unary ( Token op, Expr right ) 
 		{
 			this.op = op;
@@ -79,6 +94,21 @@ public abstract class Expr
 
 		public Token op;
 		public Expr right;
+	}
+
+	public class Variable : Expr 
+	{
+		public Variable ( Token name ) 
+		{
+			this.name = name;
+		}
+
+		public override R accept<R>(Visitor<R> visitor) 
+		{
+			return visitor.visitVariableExpr(this);
+		}
+
+		public Token name;
 	}
 
 	public abstract R accept<R>(Visitor<R> visitor);

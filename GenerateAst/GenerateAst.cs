@@ -16,10 +16,20 @@ namespace GenerateAst
             string outputDir = args[0];
             defineAst(outputDir, "Expr", new List<string>
             {
+                "Assign   : Token name, Expr value",
                 "Binary   : Expr left, Token op, Expr right",
                 "Grouping : Expr expression",
                 "Literal  : object value",
-                "Unary    : Token op, Expr right"
+                "Unary    : Token op, Expr right",
+                "Variable : Token name",
+            });
+            
+            defineAst(outputDir, "Stmt", new List<string>
+            {
+                "Block      : List<Stmt> statements",
+                "Expression : Expr expression",
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer",
             });
         }
         
@@ -31,6 +41,8 @@ namespace GenerateAst
             StreamWriter writer = new StreamWriter(path);
 
             writer.WriteLine("using Lox;");
+            writer.WriteLine("using System.Collections.Generic;");
+
             writer.WriteLine("");
             writer.WriteLine($"public abstract class {baseName} \n{{");
             
@@ -57,7 +69,6 @@ namespace GenerateAst
             string className, string fieldList) {
             writer.WriteLine("");
             writer.WriteLine($"\tpublic class {className} : {baseName} \n\t{{");
-            writer.WriteLine("");
 
             // Constructor.
             writer.WriteLine($"\t\tpublic {className} ( {fieldList} ) \n\t\t{{");
@@ -90,7 +101,6 @@ namespace GenerateAst
         private static void defineVisitor(
             StreamWriter writer, string baseName, List<string> types) 
         {
-            writer.WriteLine("");
             writer.WriteLine("\tpublic interface Visitor<R> \n\t{");
 
             foreach (string type in types) 

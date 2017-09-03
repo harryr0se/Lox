@@ -8,7 +8,12 @@ namespace Lox
         {
             return expr.accept(this);
         }
-        
+
+        public string visitAssignExpr(Expr.Assign expr)
+        {
+            return $"Assign {expr.name.lexeme}";
+        }
+
         public string visitBinaryExpr(Expr.Binary expr) {
             return parenthesize(expr.op.lexeme, expr.left, expr.right);
         }
@@ -25,7 +30,12 @@ namespace Lox
         public string visitUnaryExpr(Expr.Unary expr) {
             return parenthesize(expr.op.lexeme, expr.right);
         }
-        
+
+        public string visitVariableExpr(Expr.Variable expr)
+        {
+            return $"Visit {expr.name.lexeme}";
+        }
+
         private string parenthesize(string name, params Expr[] exprs) {
             StringBuilder builder = new StringBuilder();
 

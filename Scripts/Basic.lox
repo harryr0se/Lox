@@ -1,8 +1,5 @@
-var myString = "Value"
-
-/*
-	This is a comment
-	/* This is another comment */
-*/
-
-var number = 1.0
+var a = 1;
+{
+  var a = a + 2;
+  print a;
+}

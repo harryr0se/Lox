@@ -31,11 +31,11 @@ namespace Lox
             run(File.ReadAllText(path));
             if (hadError)
             {
-                Environment.Exit(65);
+                System.Environment.Exit(65);
             }
             if (hadRuntimeError)
             {
-                Environment.Exit(70);
+                System.Environment.Exit(70);
             }
         }
         
@@ -55,12 +55,12 @@ namespace Lox
             List<Token> tokens = scanner.scanTokens();
 
             Parser parser = new Parser(tokens);
-            Expr expression = parser.parse();
+            List<Stmt> statements = parser.parse();
 
             // Stop if there was a syntax error.
             if (hadError) return;
 
-            interpreter.interpret(expression);
+            interpreter.interpret(statements);
         }
         
         public static void error(int line, string message) 
