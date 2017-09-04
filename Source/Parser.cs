@@ -51,6 +51,7 @@ namespace Lox
             if (match(TokenType.PRINT)) return printStatement();
             if (match(TokenType.WHILE)) return whileStatement();
             if (match(TokenType.LEFT_BRACE)) return new Stmt.Block(block());
+            if (match(TokenType.BREAK)) return breakStatement(); 
             
             return expressionStatement();
         }
@@ -204,7 +205,8 @@ namespace Lox
             Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
 
             Expr initializer = null;
-            if (match(TokenType.EQUAL)) {
+            if (match(TokenType.EQUAL)) 
+            {
                 initializer = expression();
             }
 
@@ -212,7 +214,8 @@ namespace Lox
             return new Stmt.Var(name, initializer);
         }
         
-        private Stmt whileStatement() {
+        private Stmt whileStatement() 
+        {
             consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
             Expr condition = expression();
             consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
@@ -220,7 +223,14 @@ namespace Lox
 
             return new Stmt.While(condition, body);
         }
-        
+
+        private Stmt breakStatement()
+        {
+            consume(TokenType.SEMICOLON, "Expect ';' after break statement");
+
+            return new Stmt.brk();
+        }
+
         private Expr equality() 
         {
             Expr expr = comparison();

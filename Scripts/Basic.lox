@@ -1,9 +1,16 @@
 var a = 0;
 var b = 1;
 
-while (a < 10000) {
+var count = 0;
+while (a < 10000) 
+{
   print a;
   var temp = a;
   a = b;
   b = temp + b;
+  count = count + 1;
+  
+  if(count > 2){
+    //break;
+  }
 }

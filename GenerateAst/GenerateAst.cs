@@ -33,6 +33,7 @@ namespace GenerateAst
                 "Print      : Expr expression",
                 "Var        : Token name, Expr initializer",
                 "While      : Expr condition, Stmt body",
+                "brk",
             });
         }
         
@@ -54,8 +55,16 @@ namespace GenerateAst
             // The AST classes.
             foreach (string type in types)
             {
-                string className = type.Split(':')[0].Trim();
-                string fields = type.Split(':')[1].Trim(); 
+                string className = string.Empty;
+                string fields = string.Empty;
+                string[] classFieldStrings = type.Split(':');
+                
+                className = classFieldStrings[0].Trim();
+                if (classFieldStrings.Length > 1)
+                {
+                    fields = classFieldStrings[1]?.Trim() ?? string.Empty;
+                } 
+                
                 defineType(writer, baseName, className, fields);
             }
             
@@ -77,7 +86,7 @@ namespace GenerateAst
             writer.WriteLine($"\t\tpublic {className} ( {fieldList} ) \n\t\t{{");
 
             // Store parameters in fields.
-            string[] fields = fieldList.Split(new []{", "}, StringSplitOptions.None);
+            string[] fields = fieldList.Split(new []{", "}, StringSplitOptions.RemoveEmptyEntries);
             foreach (string field in fields) 
             {
                 string name = field.Split(' ')[1];

@@ -11,6 +11,7 @@ public abstract class Stmt
 		R visitPrintStmt(Print stmt);
 		R visitVarStmt(Var stmt);
 		R visitWhileStmt(While stmt);
+		R visitbrkStmt(brk stmt);
 	}
 
 	public class Block : Stmt 
@@ -109,6 +110,19 @@ public abstract class Stmt
 
 		public Expr condition;
 		public Stmt body;
+	}
+
+	public class brk : Stmt 
+	{
+		public brk (  ) 
+		{
+		}
+
+		public override R accept<R>(Visitor<R> visitor) 
+		{
+			return visitor.visitbrkStmt(this);
+		}
+
 	}
 
 	public abstract R accept<R>(Visitor<R> visitor);

@@ -134,15 +134,17 @@ namespace Lox
 
         public object visitIfStmt(Stmt.If stmt)
         {
+            object result = null;
             if (isTruthy(evaluate(stmt.condition)))
             {
-                execute(stmt.thenBranch);
+                result = execute(stmt.thenBranch);
             }
             else if (stmt.elseBranch != null)
             {
-                execute(stmt.elseBranch);
+                result = execute(stmt.elseBranch);
             }
-            return null;
+            
+            return result;
         }
 
         public object visitPrintStmt(Stmt.Print stmt)
@@ -172,8 +174,16 @@ namespace Lox
         {
             while (isTruthy(evaluate(stmt.condition)))
             {
-                execute(stmt.body);
+                bool? result = execute(stmt.body) as bool?;
+                
+                if (result != null && !result.Value)
+                    break;
             }
+            return null;
+        }
+
+        public object visitbrkStmt(Stmt.brk stmt)
+        {
             return null;
         }
 
@@ -192,8 +202,7 @@ namespace Lox
 
         public object visitBlockStmt(Stmt.Block stmt)
         {
-            executeBlock(stmt.statements, new Environment(environment));
-            return null;
+            return executeBlock(stmt.statements, new Environment(environment));
         }
 
         public object visitExpressionStmt(Stmt.Expression stmt)
@@ -210,23 +219,35 @@ namespace Lox
         {
             return stmt.accept(this);
         }
-        
-        void executeBlock(List<Stmt> statements, Environment environment) 
+
+        private object executeBlock(List<Stmt> statements, Environment blockEnvironment) 
         {
-            Environment previous = this.environment;
+            Environment previous = environment;
             try 
             {
-                this.environment = environment;
+                environment = blockEnvironment;
 
-                foreach (Stmt statement in statements) 
+                foreach (Stmt statement in statements)
                 {
-                    execute(statement);
+                    if (statement is Stmt.brk)
+                    {
+                        return false;
+                    }
+
+                    bool? result = execute(statement) as bool?;
+                    
+                    if (result != null && !result.Value)
+                    {
+                        return false;
+                    }
                 }
             } 
             finally 
             {
-                this.environment = previous;
+                environment = previous;
             }
+
+            return true;
         }
         
         private static bool isTruthy(object obj) 
